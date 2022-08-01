@@ -1,0 +1,12 @@
+# Refactoring
+
+You've been asked to refactor the function `deterministicPartitionKey` in [`dpk.js`](dpk.js) to make it easier to read and understand without changing its functionality. For this task, you should:
+
+1. Write unit tests to cover the existing functionality and ensure that your refactor doesn't break it. We typically use `jest`, but if you have another library you prefer, feel free to use it.
+2. Refactor the function to be as "clean" and "readable" as possible. There are many valid ways to define those words - use your own personal definitions, but be prepared to defend them. Note that we do like to use the latest JS language features when applicable.
+3. Write up a brief (~1 paragraph) explanation of why you made the choices you did and why specifically your version is more "readable" than the original.
+
+You will be graded on the exhaustiveness and quality of your unit tests, the depth of your refactor, and the level of insight into your thought process provided by the written explanation.
+
+## Your Explanation Here
+Since we expect `event` to have a partition key, this clearly tells that the type of `event` should always and always be an object. So the obvious check that should be applied before checking any key in it is to check if it is an object. If it is not then the default the default trivial partiion key is returned. Secondly, the variable name `candidate` does not give the context of the variable's purpose and so it is improtant to change it to what it intends to be - `partitionKey`. Thirdly, the type of `partitionKey` is `string` as the code assign the value `TRIVIAL_PARTITION_KEY` in it therby stating that it should always and always be string. And, because of the fact that when nothing is assigned to `partitionKey` the default value becomes `TRIVIAL_PARTITION_KEY`, there's no need to put an extra check to see if it is available and then check for the type. Instead, initialise it with the `TRIVIAL_PARTITION_KEY` itself and then proceed for the further computing. And now that `TRIVIAL_PARTITION_KEY` is only used once, there's no need to keep an extra variable for it. Remove `TRIVIAL_PARTITION_KEY` and simply intialize `partitionKey` with "0" and add a comment about what the value is about. Finally, there's only once case when the length of the partitionKey can go beyong 256 and that is when `event.partitionKey` itself has that long length string. So, it makes sense to check for the length only in this case as `crypto.createHash("sha3-512").update(key).digest("hex")` will anyway return 128 for such strings.
